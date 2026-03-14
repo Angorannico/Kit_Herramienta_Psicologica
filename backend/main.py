@@ -1,57 +1,86 @@
 # Archivo: backend/main.py
-# Descripcion: Servidor FastAPI que conecta el Frontend con el modelo local de Ollama.
+# Descripcion: Servidor FastAPI que conecta el Frontend con el modelo Llama 3 70B via Groq API.
 
+import os
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 import requests
+from dotenv import load_dotenv
 from prompt_manager import get_dbt_system_prompt
+
+# Cargar variables de entorno desde un archivo .env localmente
+load_dotenv()
 
 app = FastAPI(title="DBT Emergency Kit API")
 
-# Configuracion CORS obligatoria para permitir que el frontend de React (puerto 5173) 
-# se comunique con este backend (puerto 8000).
+# VARIABLES DE ENTORNO ESTRICTAS PARA PRODUCCION
+GROQ_API_KEY = os.getenv("GROQ_API_KEY")
+FRONTEND_URL = os.getenv("FRONTEND_URL", "http://localhost:5173") 
+
+if not GROQ_API_KEY:
+    print("ADVERTENCIA: GROQ_API_KEY no detectada en el entorno.")
+
+# Configuracion CORS restrictiva (Mejor practica de seguridad)
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"], 
+    allow_origins=[FRONTEND_URL], 
     allow_credentials=True,
-    allow_methods=["*"],
+    allow_methods=["POST", "OPTIONS"], 
     allow_headers=["*"],
 )
 
 class ValidationRequest(BaseModel):
     reason: str
 
-# URL por defecto donde Ollama levanta su servidor de API local
-OLLAMA_URL = "http://localhost:11434/api/generate"
-# Asegurate de que este nombre coincida con el modelo que descargaste (ej. llama3, phi3)
-MODEL_NAME = "llama3" 
+# Configuracion de Groq
+GROQ_API_URL = "https://api.groq.com/openai/v1/chat/completions"
+
+# ACTUALIZACION: Usamos el modelo optimizado Llama 3 70B de Groq para mayor razonamiento
+MODEL_NAME = "llama3-70b-8192" 
 
 @app.post("/api/validate")
 async def validate_emotion(request: ValidationRequest):
     if not request.reason.strip():
         raise HTTPException(status_code=400, detail="La razon de crisis no puede estar vacia")
+    
+    if not GROQ_API_KEY:
+         raise HTTPException(status_code=500, detail="Error de configuracion del servidor (API Key faltante)")
 
     system_prompt = get_dbt_system_prompt()
     
-    # Construccion del contexto: Instrucciones clinicas + Entrada del usuario
-    full_prompt = f"{system_prompt}\n\nENTRADA DEL PACIENTE: {request.reason}\n\nRESPUESTA DEL TERAPEUTA:"
+    headers = {
+        "Authorization": f"Bearer {GROQ_API_KEY}",
+        "Content-Type": "application/json"
+    }
 
+    # Estructura de mensajes formato OpenAI/Groq
     payload = {
         "model": MODEL_NAME,
-        "prompt": full_prompt,
+        "messages": [
+            {"role": "system", "content": system_prompt},
+            {"role": "user", "content": request.reason}
+        ],
+        "temperature": 0.3, 
+        "max_tokens": 150,  
         "stream": False
     }
 
     try:
-        response = requests.post(OLLAMA_URL, json=payload, timeout=45)
+        response = requests.post(GROQ_API_URL, headers=headers, json=payload, timeout=10)
         response.raise_for_status()
         data = response.json()
         
-        return {"validation": data.get("response", "Lo siento, no pude generar una respuesta. Tu dolor es válido y tiene sentido.")}
+        # Extraer el texto de la respuesta de la estructura JSON
+        ai_response = data['choices'][0]['message']['content']
+        
+        return {"validation": ai_response}
+        
     except requests.exceptions.RequestException as e:
-        print(f"Error critico conectando con Ollama: {e}")
-        raise HTTPException(status_code=503, detail="El motor de IA local (Ollama) no responde. Verifica que este en ejecucion.")
+        print(f"Error critico conectando con Groq API: {e}")
+        # Mensaje de fallback seguro segun directrices DBT
+        fallback_msg = "Lo siento, mi conexion fallo por un segundo. Sin embargo, quiero que sepas que tu dolor es valido y tiene sentido que te sientas asi."
+        return {"validation": fallback_msg}
 
 if __name__ == "__main__":
     import uvicorn
