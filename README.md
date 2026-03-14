@@ -43,66 +43,95 @@ El proyecto utiliza una arquitectura de Monorepo, separando claramente la interf
     ├── prompt_manager.py     # Gestor del System Prompt Clinico
     └── requirements.txt      # Dependencias Pip
 
+# Kit de Emergencia Psicológica (Protocolo DBT)
 
-## Instalacion y Ejecucion Local
+**Seguridad y Privacidad:** En estricto cumplimiento normativo, esta aplicación NO utiliza bases de datos ni almacena información médica, personal o de uso.
 
-Para ejecutar este proyecto en tu maquina local, necesitaras tener instalados Node.js y Python 3.10+, ademas de una clave API gratuita de Groq.
+---
+
+## Arquitectura y Stack Tecnológico
+
+El proyecto opera bajo un modelo de Monorepo, separando visualmente y lógicamente la interfaz del microservicio.
+
+| Capa | Tecnología Principal | Entorno de Producción |
+| :--- | :--- | :--- |
+| **Frontend** | React, Vite, TypeScript, Tailwind | Vercel |
+| **Backend** | Python 3.10+, FastAPI, Uvicorn | Railway |
+| **Motor IA** | Meta Llama 3.3 (70B Versatile) | API de Groq |
+
+---
+
+## PARTE 1: Guía de Instalación en Entorno Local
+
+Sigue estos pasos para correr el proyecto en tu propia máquina para desarrollo o pruebas.
+**Requisitos Previos:** `Node.js`, `Python 3.10+` y una clave API gratuita de [Groq Console](https://console.groq.com).
 
 ### 1. Clonar el repositorio
+```bash
 git clone <URL_DEL_REPOSITORIO>
 cd kit_herramienta_psicologica
+```
 
-### 2. Configuracion del Backend (Servidor IA)
-Abre una terminal y navega a la carpeta del backend:
+2. Levantar el Backend (FastAPI + IA)
+Abre una terminal y navega al directorio del servidor:
 
+```bash
 cd backend
-
-# Crear y activar entorno virtual (Opcional pero recomendado)
 python -m venv venv
-source venv/bin/activate  # En Windows usa: venv\Scripts\activate
-
-# Instalar dependencias
+source venv/bin/activate  # En Windows usar: venv\Scripts\activate
 pip install -r requirements.txt
+```
+Variables de Entorno:
+Crea un archivo llamado .env dentro de la carpeta backend/ e inyecta tus claves:
 
-# Configurar variables de entorno
-Crea un archivo `.env` en la carpeta `backend/` con el siguiente contenido:
+Fragmento de código
+
 GROQ_API_KEY=tu_clave_de_groq_aqui
 FRONTEND_URL=http://localhost:5173
 
-# Iniciar el servidor
+Ejecución:
+```Bash
 uvicorn main:app --reload
-# El servidor estara escuchando en http://localhost:8000
+(El servidor de IA estará escuchando en http://localhost:8000)
+```
+3. Levantar el Frontend (React + Vite)
+Abre una segunda terminal y navega a la interfaz:
 
-### 3. Configuracion del Frontend (Interfaz)
-Abre una nueva terminal y navega a la carpeta del frontend:
-
+```Bash
 cd frontend
-
-# Instalar dependencias
 npm install
+```
+Variables de Entorno:
+Crea un archivo llamado .env dentro de la carpeta frontend/:
 
-# Configurar variables de entorno
-Crea un archivo `.env` en la carpeta `frontend/` con el siguiente contenido:
+Fragmento de código
 VITE_API_URL=http://localhost:8000
 
-# Iniciar el servidor de desarrollo
+Ejecución:
+```Bash
 npm run dev
-# La aplicacion estara disponible en http://localhost:5173
+```
+(La aplicación interactiva estará disponible en http://localhost:5173)
 
+PARTE 2: Guía de Despliegue en la Nube (Producción)
+Esta arquitectura está diseñada para desplegarse de manera óptima y gratuita (o a muy bajo costo).
 
-## Guia de Despliegue en Produccion
+A. Despliegue del Backend en Railway
+    1. Conecta tu repositorio de GitHub en Railway creando un nuevo proyecto.
+    2. Ve a Settings y configura el Root Directory como /backend.
+    3. En la sección Custom Start Command, ingresa:
+    uvicorn main:app --host 0.0.0.0 --port $PORT
+    4. En Variables, agrega la variable GROQ_API_KEY con tu clave de la API.
+    5. En la sección Networking, haz clic en Generate Domain para obtener tu URL pública (Ej: https://tu-backend.up.railway.app).
 
-Este proyecto esta optimizado para ser desplegado en plataformas en la nube de forma gratuita o a muy bajo costo.
+B. Despliegue del Frontend en Vercel
+    1. Importa el repositorio desde tu panel de Vercel.
+    2. Configura el Root Directory seleccionando la carpeta /frontend.
+    3. Ve a Environment Variables y agrega VITE_API_URL. Como valor, pega el dominio público que te dio Railway en el paso anterior (sin la barra / al final).
+    4. Haz clic en Deploy y obtén tu dominio oficial (Ej: https://tu-app.vercel.app).
 
-1. Frontend (Vercel):
-   * Importar el repositorio en Vercel.
-   * Configurar el "Root Directory" como `frontend`.
-   * Agregar la variable de entorno `VITE_API_URL` apuntando al dominio publico del backend.
-   * Desplegar.
-
-2. Backend (Railway o Render):
-   * Importar el repositorio.
-   * Configurar el "Root Directory" como `backend`.
-   * Establecer el comando de inicio: `uvicorn main:app --host 0.0.0.0 --port $PORT`.
-   * Agregar las variables `GROQ_API_KEY` y `FRONTEND_URL` (esta ultima debe ser el dominio exacto de Vercel).
-   * Desplegar.
+C. Enlace de Seguridad (Configuración CORS)
+Para blindar el servidor y que solo tu frontend pueda usar la IA:
+    1. Regresa a tu proyecto en Railway > Pestaña Variables.
+    2. Agrega una nueva variable llamada FRONTEND_URL y pega el dominio exacto que te dio Vercel.
+    3. Railway se reiniciará automáticamente. Finalmente, ve a Vercel y haz un Redeploy para aplicar la conexión final.
