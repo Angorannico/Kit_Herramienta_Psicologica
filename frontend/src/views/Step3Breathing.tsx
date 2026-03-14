@@ -1,4 +1,5 @@
-// Paso 3 refactorizado. Ritmo 4-4-6 con reloj maestro para transiciones ultra suaves, conteo visible y boton de salto.
+// Archivo: src/views/Step3Breathing.tsx
+// Descripcion: Paso 3 refactorizado. Correccion de inicio de animacion (comienza en scale 1).
 
 import React, { useState, useEffect } from 'react';
 import { useCrisisStore } from '../store/useCrisisStore';
@@ -9,22 +10,27 @@ type BreathPhase = 'inhale' | 'hold' | 'exhale';
 export const Step3Breathing: React.FC = () => {
     const { nextStep, setStep, setAnxietyLevel } = useCrisisStore();
     const [timeLeft, setTimeLeft] = useState<number>(60);
-
-    // Reloj maestro del ciclo (14 segundos en total: 4 + 4 + 6)
     const [cycleTick, setCycleTick] = useState<number>(0);
+
+    // Nuevo estado para forzar que el circulo inicie pequeno antes de expandirse
+    const [isAnimating, setIsAnimating] = useState<boolean>(false);
+
+    useEffect(() => {
+        // Permite que el componente se renderice en su tamano original (scale 1) 
+        // y en el siguiente frame de animacion del navegador, arranca la expansion.
+        const frame = requestAnimationFrame(() => setIsAnimating(true));
+        return () => cancelAnimationFrame(frame);
+    }, []);
 
     useEffect(() => {
         if (timeLeft <= 0) return;
-
         const interval = setInterval(() => {
             setCycleTick((prev) => (prev + 1) % 14);
             setTimeLeft((prev) => prev - 1);
         }, 1000);
-
         return () => clearInterval(interval);
     }, [timeLeft]);
 
-    // Derivamos la fase actual y los segundos restantes de esa fase basados en el reloj maestro
     let phase: BreathPhase = 'inhale';
     let phaseSeconds = 0;
 
@@ -46,13 +52,10 @@ export const Step3Breathing: React.FC = () => {
 
     const handleHighRouting = () => {
         setAnxietyLevel('high');
-        nextStep(); // Avanza al Paso 4
+        nextStep();
     };
 
-    // Boton de saltar (fuerza el fin del temporizador para mostrar el triage)
-    const handleSkip = () => {
-        setTimeLeft(0);
-    };
+    const handleSkip = () => setTimeLeft(0);
 
     const getInstruction = () => {
         switch (phase) {
@@ -62,8 +65,12 @@ export const Step3Breathing: React.FC = () => {
         }
     };
 
-    // Estilos dinamicos para forzar una transicion CSS perfecta sin saltos
     const getCircleStyle = (): React.CSSProperties => {
+        // Si aun no ha empezado a animar, forzamos que el tamano sea pequeno.
+        if (!isAnimating) {
+            return { transform: 'scale(1)', opacity: 0.7 };
+        }
+
         if (phase === 'inhale') {
             return { transform: 'scale(1.5)', transition: 'transform 4s ease-in-out', opacity: 1 };
         } else if (phase === 'hold') {
@@ -86,7 +93,6 @@ export const Step3Breathing: React.FC = () => {
                     </p>
 
                     <div className="relative w-48 h-48 mb-12 flex items-center justify-center">
-                        {/* Circulo animado por React Styles en lugar de Tailwind classes */}
                         <div
                             className="absolute inset-0 bg-dbt-primary/20 rounded-full"
                             style={getCircleStyle()}
@@ -114,31 +120,19 @@ export const Step3Breathing: React.FC = () => {
                     <p className="text-xl font-bold text-dbt-success mb-6 text-center">
                         ¡Excelente trabajo! <br /> ¿Cómo te sientes ahora?
                     </p>
-
                     <div className="flex flex-col gap-4 w-full">
-                        <button
-                            onClick={handleModerateRouting}
-                            className="w-full bg-dbt-surface hover:bg-dbt-surface/80 border-2 border-dbt-success/50 p-5 rounded-2xl text-left transition-colors flex items-start gap-4 active:scale-95"
-                        >
+                        <button onClick={handleModerateRouting} className="w-full bg-dbt-surface hover:bg-dbt-surface/80 border-2 border-dbt-success/50 p-5 rounded-2xl text-left transition-colors flex items-start gap-4 active:scale-95">
                             <Activity className="text-dbt-success mt-1 flex-shrink-0" size={24} />
                             <div>
                                 <h3 className="font-bold text-dbt-text text-lg mb-1">Ansiedad Moderada</h3>
-                                <p className="text-sm text-dbt-muted leading-relaxed">
-                                    Preocupación frecuente, tensión física, problemas de concentración y aumento de la irritabilidad.
-                                </p>
+                                <p className="text-sm text-dbt-muted leading-relaxed">Preocupación frecuente, tensión física, problemas de concentración e irritabilidad.</p>
                             </div>
                         </button>
-
-                        <button
-                            onClick={handleHighRouting}
-                            className="w-full bg-dbt-surface hover:bg-dbt-surface/80 border-2 border-dbt-danger/50 p-5 rounded-2xl text-left transition-colors flex items-start gap-4 active:scale-95"
-                        >
+                        <button onClick={handleHighRouting} className="w-full bg-dbt-surface hover:bg-dbt-surface/80 border-2 border-dbt-danger/50 p-5 rounded-2xl text-left transition-colors flex items-start gap-4 active:scale-95">
                             <AlertTriangle className="text-dbt-danger mt-1 flex-shrink-0" size={24} />
                             <div>
                                 <h3 className="font-bold text-dbt-text text-lg mb-1">Ansiedad Alta</h3>
-                                <p className="text-sm text-dbt-muted leading-relaxed">
-                                    Preocupación intensa, constante y difícil de controlar, sensación de peligro inminente y bloqueo mental.
-                                </p>
+                                <p className="text-sm text-dbt-muted leading-relaxed">Preocupación intensa y constante, sensación de peligro inminente y bloqueo mental.</p>
                             </div>
                         </button>
                     </div>

@@ -23,7 +23,7 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
                         Kit de Emergencia
                     </span>
                 </div>
-                {currentStep > 1 && (
+                {currentStep !== 1 && (
                     <button
                         onClick={resetProtocol}
                         className="text-sm font-medium text-dbt-muted hover:text-dbt-text transition-colors"
@@ -40,19 +40,21 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
             </main>
 
             {/* Footer: Indicador de progreso sutil (Puntos en lugar de numeros para reducir ansiedad) */}
-            <footer className="absolute bottom-0 left-0 w-full p-8 flex justify-center gap-3">
-                {[1, 2, 3, 4, 5, 6].map((step) => (
-                    <div
-                        key={step}
-                        className={`h-2 rounded-full transition-all duration-500 ${step === currentStep
-                            ? 'w-8 bg-dbt-primary'
-                            : step < currentStep
-                                ? 'w-2 bg-dbt-success'
-                                : 'w-2 bg-dbt-surface'
-                            }`}
-                    />
-                ))}
-            </footer>
+            {typeof currentStep === 'number' && (
+                <footer className="absolute bottom-0 left-0 w-full p-8 flex justify-center gap-3">
+                    {[1, 2, 3, 4, 5, 6].map((step) => (
+                        <div
+                            key={step}
+                            className={`h-2 rounded-full transition-all duration-500 ${step === currentStep
+                                ? 'w-8 bg-dbt-primary'
+                                : step < currentStep
+                                    ? 'w-2 bg-dbt-success'
+                                    : 'w-2 bg-dbt-surface'
+                                }`}
+                        />
+                    ))}
+                </footer>
+            )}
         </div>
     );
 };

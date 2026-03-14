@@ -1,5 +1,5 @@
 // Archivo: src/views/Step5Facts.tsx
-// Descripcion: Paso 5 del protocolo. "Check the Facts" con bifurcacion de emergencia (Linea 106).
+// Descripcion: Paso 5 del protocolo con boton de emergencia rojo y animado.
 
 import React from 'react';
 import { useCrisisStore } from '../store/useCrisisStore';
@@ -32,12 +32,12 @@ export const Step5Facts: React.FC = () => {
             </div>
 
             <div className="flex flex-col w-full max-w-xs gap-4">
-                {/* Boton de Emergencia (Peligro Real) */}
+                {/* Boton de Emergencia: Forzado a Rojo Puro (red-600) y con animacion de latido (animate-pulse) */}
                 <a
                     href="https://wa.me/573007548933"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="w-full h-16 rounded-2xl bg-dbt-danger hover:bg-dbt-dangerHover text-white flex items-center justify-center gap-3 transition-colors shadow-lg shadow-dbt-danger/20 active:scale-95"
+                    className="w-full h-16 rounded-2xl bg-red-600 hover:bg-red-700 text-white flex items-center justify-center gap-3 transition-colors shadow-lg shadow-red-600/30 animate-pulse active:scale-95"
                 >
                     <PhoneCall size={24} />
                     <span className="font-bold text-lg tracking-wide">
@@ -45,7 +45,7 @@ export const Step5Facts: React.FC = () => {
                     </span>
                 </a>
 
-                {/* Boton de Anclaje Cognitivo (Falsa Alarma) - Avanza a Mente Sabia */}
+                {/* Boton de Anclaje Cognitivo */}
                 <button
                     onClick={nextStep}
                     className="w-full h-16 rounded-2xl bg-transparent border-2 border-dbt-success flex items-center justify-center gap-3 hover:bg-dbt-success/10 transition-colors active:scale-95"
@@ -62,4 +62,4 @@ export const Step5Facts: React.FC = () => {
             </p>
         </div>
     );
-};
+};  
