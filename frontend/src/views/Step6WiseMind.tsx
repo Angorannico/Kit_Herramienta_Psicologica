@@ -102,4 +102,5 @@ export const Step6WiseMind: React.FC = () => {
             )}
         </div>
     );
+
 };
