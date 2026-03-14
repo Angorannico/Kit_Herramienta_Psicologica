@@ -117,12 +117,15 @@ PARTE 2: Guía de Despliegue en la Nube (Producción)
 Esta arquitectura está diseñada para desplegarse de manera óptima y gratuita (o a muy bajo costo).
 
 A. Despliegue del Backend en Railway
-    1. Conecta tu repositorio de GitHub en Railway creando un nuevo proyecto.
-    2. Ve a Settings y configura el Root Directory como /backend.
-    3. En la sección Custom Start Command, ingresa:
-    uvicorn main:app --host 0.0.0.0 --port $PORT
-    4. En Variables, agrega la variable GROQ_API_KEY con tu clave de la API.
-    5. En la sección Networking, haz clic en Generate Domain para obtener tu URL pública (Ej: https://tu-backend.up.railway.app).
+1. Conecta tu repositorio de GitHub en Railway creando un nuevo proyecto.
+
+2. Ve a Settings y configura el Root Directory como /backend.
+
+3. En la sección Custom Start Command, ingresa:
+uvicorn main:app --host 0.0.0.0 --port $PORT
+4. En Variables, agrega la variable GROQ_API_KEY con tu clave de la API.
+   
+5. En la sección Networking, haz clic en Generate Domain para obtener tu URL pública (Ej: https://tu-backend.up.railway.app).
 
 B. Despliegue del Frontend en Vercel
     1. Importa el repositorio desde tu panel de Vercel.
