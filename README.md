@@ -128,13 +128,18 @@ uvicorn main:app --host 0.0.0.0 --port $PORT
 5. En la sección Networking, haz clic en Generate Domain para obtener tu URL pública (Ej: https://tu-backend.up.railway.app).
 
 B. Despliegue del Frontend en Vercel
-    1. Importa el repositorio desde tu panel de Vercel.
-    2. Configura el Root Directory seleccionando la carpeta /frontend.
-    3. Ve a Environment Variables y agrega VITE_API_URL. Como valor, pega el dominio público que te dio Railway en el paso anterior (sin la barra / al final).
-    4. Haz clic en Deploy y obtén tu dominio oficial (Ej: https://tu-app.vercel.app).
+1. Importa el repositorio desde tu panel de Vercel.
+
+2. Configura el Root Directory seleccionando la carpeta /frontend.
+
+3. Ve a Environment Variables y agrega VITE_API_URL. Como valor, pega el dominio público que te dio Railway en el paso anterior (sin la barra / al final).
+
+4. Haz clic en Deploy y obtén tu dominio oficial (Ej: https://tu-app.vercel.app).
 
 C. Enlace de Seguridad (Configuración CORS)
 Para blindar el servidor y que solo tu frontend pueda usar la IA:
-    1. Regresa a tu proyecto en Railway > Pestaña Variables.
-    2. Agrega una nueva variable llamada FRONTEND_URL y pega el dominio exacto que te dio Vercel.
-    3. Railway se reiniciará automáticamente. Finalmente, ve a Vercel y haz un Redeploy para aplicar la conexión final.
+1. Regresa a tu proyecto en Railway > Pestaña Variables.
+
+2. Agrega una nueva variable llamada FRONTEND_URL y pega el dominio exacto que te dio Vercel.
+
+3. Railway se reiniciará automáticamente. Finalmente, ve a Vercel y haz un Redeploy para aplicar la conexión final.
