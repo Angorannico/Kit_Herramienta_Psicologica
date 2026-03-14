@@ -28,19 +28,20 @@ El proyecto utiliza una arquitectura de Monorepo, separando claramente la interf
 
 ## Estructura del Repositorio
 
+
 /
-├── frontend/                # Aplicacion React + Vite
-│   ├── src/
-│   │   ├── components/      # Componentes UI reutilizables
-│   │   ├── store/           # Estado global (Zustand)
-│   │   ├── views/           # Vistas de los 6 pasos del protocolo
-│   │   └── utils/           # Utilidades y tipado
-│   └── package.json         # Dependencias NPM
+├── frontend/                 # Aplicacion React + Vite
+│   ├── src/ 
+│   │   ├── components/       # Componentes UI reutilizables
+│   │   ├── store/            # Estado global (Zustand)
+│   │   ├── views/            # Vistas de los 6 pasos del protocolo
+│   │   └── utils/            # Utilidades y tipado
+│   └── package.json          # Dependencias NPM
 │
-└── backend/                 # API Python
-    ├── main.py              # Servidor FastAPI y configuracion CORS
-    ├── prompt_manager.py    # Gestor del System Prompt Clinico
-    └── requirements.txt     # Dependencias Pip
+└── backend/                  # API Python
+    ├── main.py               # Servidor FastAPI y configuracion CORS
+    ├── prompt_manager.py     # Gestor del System Prompt Clinico
+    └── requirements.txt      # Dependencias Pip
 
 
 ## Instalacion y Ejecucion Local
