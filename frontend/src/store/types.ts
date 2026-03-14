@@ -1,30 +1,26 @@
-
-// Definicion de tipos estrictos para el estado global de la crisis DBT.
-
-// Definimos los pasos exactos permitidos para evitar estados invalidos.
-export type ProtocolStep = 1 | 2 | 3 | 4 | 5 | 6;
-
-// Nivel de ansiedad medido en la escala Subjective Units of Distress Scale (SUDS) de 1 a 10.
+// Agregamos 'moderate_exit' como un paso valido en el enrutamiento
+export type ProtocolStep = 1 | 2 | 3 | 4 | 5 | 6 | 'moderate_exit';
 export type SudsLevel = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | null;
+export type AnxietyLevel = 'moderate' | 'high' | null;
 
 export interface CrisisState {
-    // Variables de Estado Clinico
     currentStep: ProtocolStep;
     preCrisisSuds: SudsLevel;
     postCrisisSuds: SudsLevel;
     crisisReason: string;
     aiValidationResponse: string;
     isLoadingAi: boolean;
+    anxietyLevel: AnxietyLevel; // Nuevo campo
 
-    // Acciones de Navegacion
     nextStep: () => void;
     prevStep: () => void;
     resetProtocol: () => void;
+    setStep: (step: ProtocolStep) => void; // Nueva funcion para saltos personalizados
 
-    // Acciones de Mutacion de Datos
     setPreCrisisSuds: (level: SudsLevel) => void;
     setPostCrisisSuds: (level: SudsLevel) => void;
     setCrisisReason: (reason: string) => void;
     setAiValidationResponse: (response: string) => void;
     setIsLoadingAi: (isLoading: boolean) => void;
+    setAnxietyLevel: (level: AnxietyLevel) => void; // Nuevo mutador
 }

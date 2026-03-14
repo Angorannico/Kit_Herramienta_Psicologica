@@ -9,6 +9,7 @@ import { Step3Breathing } from './views/Step3Breathing';
 import { Step4Grounding } from './views/Step4Grounding';
 import { Step5Facts } from './views/Step5Facts';
 import { Step6WiseMind } from './views/Step6WiseMind';
+import { StepModerateExit } from './views/StepModerateExit';
 
 function App() {
   const currentStep = useCrisisStore((state) => state.currentStep);
@@ -27,6 +28,8 @@ function App() {
         return <Step5Facts />;
       case 6:
         return <Step6WiseMind />;
+      case 'moderate_exit':
+        return <StepModerateExit />;
       default:
         return <Step1Stop />;
     }
