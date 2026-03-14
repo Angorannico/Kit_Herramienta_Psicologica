@@ -1,14 +1,15 @@
-// Paso 5 del protocolo. Habilidad "Check the Facts" para activar la corteza prefrontal.
+// Archivo: src/views/Step5Facts.tsx
+// Descripcion: Paso 5 del protocolo. "Check the Facts" con bifurcacion de emergencia (Linea 106).
 
 import React from 'react';
 import { useCrisisStore } from '../store/useCrisisStore';
-import { BrainCircuit, ShieldCheck } from 'lucide-react';
+import { BrainCircuit, ShieldCheck, PhoneCall } from 'lucide-react';
 
 export const Step5Facts: React.FC = () => {
     const nextStep = useCrisisStore((state) => state.nextStep);
 
     return (
-        <div className="flex flex-col items-center justify-center w-full animate-fade-in">
+        <div className="flex flex-col items-center justify-center w-full animate-fade-in py-8">
             <div className="bg-dbt-surface p-6 rounded-full mb-8 shadow-lg shadow-dbt-bg/50">
                 <BrainCircuit size={64} className="text-dbt-primary" />
             </div>
@@ -17,29 +18,46 @@ export const Step5Facts: React.FC = () => {
                 Revisemos los Hechos
             </h1>
 
-            <p className="text-lg text-dbt-text mb-8 max-w-sm text-center">
+            <p className="text-lg text-dbt-text mb-8 max-w-sm text-center px-4">
                 Tu cuerpo reaccionó como si estuvieras frente a un depredador. Pero mira a tu alrededor.
             </p>
 
             <div className="bg-dbt-surface p-6 rounded-2xl border border-dbt-muted/20 w-full max-w-sm mb-12">
                 <p className="text-base text-dbt-muted text-center font-medium">
                     Pregunta clave: <br />
-                    <span className="text-dbt-text text-lg">¿Estás en peligro físico real e inmediato en este exacto momento?</span>
+                    <span className="text-dbt-text text-lg mt-2 block">
+                        ¿Estás en peligro físico real e inmediato en este exacto momento?
+                    </span>
                 </p>
             </div>
 
-            {/* Boton de anclaje cognitivo */}
-            <button
-                onClick={nextStep}
-                className="w-full max-w-xs h-16 rounded-2xl bg-dbt-surface border-2 border-dbt-success flex items-center justify-center gap-3 hover:bg-dbt-success/10 transition-colors active:scale-95"
-            >
-                <ShieldCheck size={24} className="text-dbt-success" />
-                <span className="font-bold text-lg text-dbt-success">
-                    Estoy a salvo ahora
-                </span>
-            </button>
+            <div className="flex flex-col w-full max-w-xs gap-4">
+                {/* Boton de Emergencia (Peligro Real) */}
+                <a
+                    href="https://wa.me/573007548933"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="w-full h-16 rounded-2xl bg-dbt-danger hover:bg-dbt-dangerHover text-white flex items-center justify-center gap-3 transition-colors shadow-lg shadow-dbt-danger/20 active:scale-95"
+                >
+                    <PhoneCall size={24} />
+                    <span className="font-bold text-lg tracking-wide">
+                        NO ME SIENTO A SALVO
+                    </span>
+                </a>
 
-            <p className="text-xs text-dbt-muted mt-6 max-w-xs text-center">
+                {/* Boton de Anclaje Cognitivo (Falsa Alarma) - Avanza a Mente Sabia */}
+                <button
+                    onClick={nextStep}
+                    className="w-full h-16 rounded-2xl bg-transparent border-2 border-dbt-success flex items-center justify-center gap-3 hover:bg-dbt-success/10 transition-colors active:scale-95"
+                >
+                    <ShieldCheck size={24} className="text-dbt-success" />
+                    <span className="font-bold text-lg text-dbt-success">
+                        Estoy a salvo ahora
+                    </span>
+                </button>
+            </div>
+
+            <p className="text-xs text-dbt-muted mt-8 max-w-xs text-center">
                 Si el peligro no es de vida o muerte inmediata, tu cerebro está dando una falsa alarma. Está bien.
             </p>
         </div>
