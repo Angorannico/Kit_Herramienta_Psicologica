@@ -23,7 +23,9 @@ export const Step6WiseMind: React.FC = () => {
 
         try {
             // Nota: Esta URL apuntara a nuestro microservicio FastAPI (Python)
-            const response = await fetch('http://localhost:8000/api/validate', {
+            const baseUrl = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+
+            const response = await fetch(`${baseUrl}/api/validate`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -32,7 +34,7 @@ export const Step6WiseMind: React.FC = () => {
             });
 
             if (!response.ok) {
-                throw new Error('Error en la comunicación con el servidor local');
+                throw new Error('Error en la comunicación con el servidor');
             }
 
             const data = await response.json();
