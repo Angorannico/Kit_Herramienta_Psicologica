@@ -37,7 +37,7 @@ class ValidationRequest(BaseModel):
 GROQ_API_URL = "https://api.groq.com/openai/v1/chat/completions"
 
 # ACTUALIZACION: Usamos el modelo optimizado Llama 3 70B de Groq para mayor razonamiento
-MODEL_NAME = "llama3-70b-8192" 
+MODEL_NAME = "llama-3.3-70b-versatile"
 
 @app.post("/api/validate")
 async def validate_emotion(request: ValidationRequest):
